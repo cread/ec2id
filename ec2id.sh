@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd /var/tmp
-wget http://phrydde.net.s3.amazonaws.com/idapp.tar.bz2
-tar fxj idapp.tar.bz2
-cd idapp
-./idapp.py >idapp.log &
+wget http://ec2id.s3.amazonaws.com/ec2id.tar.bz2
+tar fxj ec2id.tar.bz2
+cd ec2id
+./ec2id.py >ec2id.log &
 
 

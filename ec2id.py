@@ -5,7 +5,7 @@ import urllib
 
 import cherrypy
 
-class AWSInfo(object):
+class EC2InstanceData(object):
     def getData(self, url):
         handle = urllib.urlopen(url)
         data = ""
@@ -34,8 +34,8 @@ class AWSInfo(object):
 
 
     def index(self):
-        res = "<html><head><title>AWS Info App</title></head><body>"
-        res += "<h2>AWS Instance Info:</h2>"
+        res = "<html><head><title>EC2 Instance Data</title></head><body>"
+        res += "<h2>EC2 Instance Data:</h2>"
         res += "<table border='1'><tr><th>Key</th><th>Data</th></tr>"
 
         for key in self.keys:
@@ -49,15 +49,13 @@ class AWSInfo(object):
 
 
 def main(argv):
-    print "AWS Info App"
     cherrypy.config.update({
         'environment': 'production',
         'log.access_file': "/dev/stdout",
         'server.socket_host': "0.0.0.0",
         'server.socket_port': 8080,
         })
-    #cherrypy.quickstart(AWSInfo(), config={
-    cherrypy.quickstart(AWSInfo())
+    cherrypy.quickstart(EC2InstanceData())
 
 
 if __name__ == "__main__":
