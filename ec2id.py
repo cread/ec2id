@@ -2,17 +2,22 @@
 
 import sys
 import urllib
+import socket
+from optparse import OptionParser
 
 import cherrypy
 
 class EC2InstanceData(object):
     def getData(self, url):
-        handle = urllib.urlopen(url)
-        data = ""
-        if handle.info()["Content-Type"] == "text/plain":
-            data = handle.read()
-        handle.close()
-        return data
+        try:
+            handle = urllib.urlopen(url)
+            data = ""
+            if handle.info()["Content-Type"] == "text/plain":
+                data = handle.read()
+            handle.close()
+            return data
+        except:
+            return ""
 
 
     def loadData(self, base, parent=""):
@@ -23,15 +28,20 @@ class EC2InstanceData(object):
                 self.keys.append(parent + key)
                 self.data[parent + key] = self.getData(base + key)
 
-
     def __init__(self):
         self.keys = []
         self.data = {}
 
-        base = "http://169.254.169.254/latest/meta-data/"
+        self.base = "http://169.254.169.254/latest/meta-data/"
 
-        self.loadData(base)
+        self.loadData(self.base)
 
+
+    def refresh(self):
+        self.loadData(self.base)
+        raise cherrypy.HTTPRedirect("/")
+
+    refresh.exposed = True
 
     def index(self):
         res = "<html><head><title>EC2 Instance Data</title></head><body>"
@@ -42,6 +52,7 @@ class EC2InstanceData(object):
             res += "<tr><th align='left'>%s</th><td>%s</td></tr>" % (key, self.data[key])
 
         res += "</table>"
+        res += "<form action='/refresh' method='GET'><input type='submit' value='Refresh'></form>"
         res += "</body></html>"
         return res
 
@@ -49,11 +60,21 @@ class EC2InstanceData(object):
 
 
 def main(argv):
+    parser = OptionParser()
+    parser.add_option("-p", "--port", dest="port", default=8080, type="int",
+                      help="Listen on PORT instead of the default of 8080", metavar="PORT")
+    parser.add_option("-t", "--timeout", dest="timeout", default=15, type="int",
+                      help="Set the default socket timeout value to TIMEOUT seconds instead of the default of 15", metavar="TIMEOUT")
+
+    (options, args) = parser.parse_args()
+
+    socket.setdefaulttimeout(options.timeout)
+
     cherrypy.config.update({
         'environment': 'production',
         'log.access_file': "/dev/stdout",
         'server.socket_host': "0.0.0.0",
-        'server.socket_port': 8080,
+        'server.socket_port': options.port,
         })
     cherrypy.quickstart(EC2InstanceData())
 
