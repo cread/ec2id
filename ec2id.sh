@@ -1,9 +1,12 @@
 #!/bin/bash
 
 cd /var/tmp
-wget http://ec2id.s3.amazonaws.com/ec2id.tar.bz2
-tar fxj ec2id.tar.bz2
-cd ec2id
+wget -O ec2id.tar.gz http://github.com/cread/ec2id/tarball/master
+tar fxz ec2id.tar.gz
+cd cread-ec2id-*
+
+echo "Starting up ec2id in $(pwd)..."
+
 python ec2id.py 
 
 
