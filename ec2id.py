@@ -59,6 +59,13 @@ class EC2InstanceData(object):
 
     refresh.exposed = True
 
+
+    def status(self):
+        return "All Systems Go"
+
+    status.exposed = True
+
+
     def index(self):
         res = "<html><head><title>EC2 Instance Data</title></head><body>"
         res += "<h2>EC2 Instance Data:</h2>"
