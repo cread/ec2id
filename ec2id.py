@@ -51,6 +51,9 @@ class EC2InstanceData(object):
 
 
     def refresh(self):
+        self.keys = []
+        self.data = {}
+
         self.loadData(self.base)
         raise cherrypy.HTTPRedirect("/")
 
