@@ -5,8 +5,9 @@ wget -O ec2id.tar.gz http://github.com/cread/ec2id/tarball/master
 tar fxz ec2id.tar.gz
 cd cread-ec2id-*
 
-echo "Starting up ec2id in $(pwd)..."
+echo -n "Starting up ec2id in $(pwd)..."
 
-python ec2id.py 
+nohup python ec2id.py > ec2id.log &
 
+echo "done!"
 
